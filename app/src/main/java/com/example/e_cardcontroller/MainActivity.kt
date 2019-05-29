@@ -15,6 +15,11 @@ import java.net.URL
 import java.net.HttpURLConnection
 import org.json.JSONObject
 import android.os.StrictMode
+import android.widget.TextView
+import android.widget.RelativeLayout
+import android.widget.Toast
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,17 +35,11 @@ class MainActivity : AppCompatActivity() {
 
         StrictMode.setThreadPolicy(policy)
 
-
-        var leftButton = findViewById<ImageButton>(R.id.leftButton)
-        var rightButton = findViewById<ImageButton>(R.id.rightButton)
-
         var button1 = findViewById<Button>(R.id.button1)
         var button2 = findViewById<Button>(R.id.button2)
-        var button3 = findViewById<Button>(R.id.button3)
-        var button4 = findViewById<Button>(R.id.button4)
 
         //Get Button Strings
-        val base_url = "http://172.16.2.11"
+        val base_url = "http://192.168.43.230"
 
         val url = URL(base_url + "/get_button_names")
 
@@ -53,8 +52,6 @@ class MainActivity : AppCompatActivity() {
                     val jsonshit = JSONObject(line)
                     button1.setText(jsonshit.getString("1"))
                     button2.setText(jsonshit.getString("2"))
-                    button3.setText(jsonshit.getString("3"))
-                    button4.setText(jsonshit.getString("4"))
                 }
             }
         }
@@ -74,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             Pair("QC", R.drawable.cq), Pair("QD", R.drawable.dq), Pair("QH", R.drawable.hq), Pair("QS", R.drawable.sq),
             Pair("KC", R.drawable.ck), Pair("KD", R.drawable.dk), Pair("KH", R.drawable.hk), Pair("KS", R.drawable.sk),
             Pair("AC", R.drawable.ca), Pair("AD", R.drawable.da), Pair("AH", R.drawable.ha), Pair("AS", R.drawable.sa),
-            Pair("Joker1", R.drawable.joker1), Pair("Joker1", R.drawable.joker1)
+            Pair("Joker1", R.drawable.joker1), Pair("Joker2", R.drawable.joker2)
             )
 
         var cardsLayout = findViewById<LinearLayout>(R.id.cardsLayout)
@@ -95,41 +92,28 @@ class MainActivity : AppCompatActivity() {
             cardsLayout.addView(view)
         }
 
-        clearCardsDisplay()
+        /*clearCardsDisplay()
         for (card in cardsImages)
         {
             displayCard(card.value)
-        }
-
-        //Left onClick
-        leftButton.setOnClickListener {
-            Toast.makeText(this@MainActivity, "Left.", Toast.LENGTH_SHORT).show()
-
-        }
-
-        //Right onClick
-        rightButton.setOnClickListener {
-            Toast.makeText(this@MainActivity, "Right.", Toast.LENGTH_SHORT).show()
-        }
+        }*/
 
         //Button 1 onClick
         button1.setOnClickListener {
-            Toast.makeText(this@MainActivity, "1", Toast.LENGTH_SHORT).show()
-
             val url1 = URL(base_url + "/button1_pressed")
 
             with(url1.openConnection() as HttpURLConnection) {
                 requestMethod = "POST"  // optional default is GET
 
-                inputStream.bufferedReader().use {
-                    it.lines().forEach { line ->
+                inputStream.bufferedReader().use { bufferedReader ->
+                    bufferedReader.lines().forEach { line ->
                         val jsonshit = JSONObject(line)
-                        val command = jsonshit.getString("Command")
+                        val command = jsonshit.getString("command")
                         if (command == "show_hand")
                         {
                             val args: JSONArray = jsonshit.getJSONArray("args")
                             clearCardsDisplay()
-                            for(i in 0..args.length())
+                            for(i in 0..(args.length()-1))
                             {
                                 if(cardsImages[args[i].toString()] != null)
                                 {
@@ -137,6 +121,11 @@ class MainActivity : AppCompatActivity() {
                                     displayCard(cardImage)
                                 }
                             }
+                        }
+                        if (command == "no")
+                        {
+                            Toast.makeText(this@MainActivity, "Cant Draw twice...", Toast.LENGTH_SHORT).show()
+
                         }
                     }
                 }
@@ -153,45 +142,70 @@ class MainActivity : AppCompatActivity() {
                 inputStream.bufferedReader().use {
                     it.lines().forEach { line ->
                         val jsonshit = JSONObject(line)
-                        val command = jsonshit.getString("Command")
+                        val command = jsonshit.getString("command")
                         if (command == "message") {
                             val message: String = jsonshit.getString("string")
                             Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
-                        }
-                        else if (command == "show_hand and message")
-                        {
+                        } else if (command == "show_hand") {
+                            val args: JSONArray = jsonshit.getJSONArray("args")
+                            clearCardsDisplay()
+                            for (i in 0..(args.length() - 1)) {
+                                if (cardsImages[args[i].toString()] != null) {
+                                    val cardImage: Int = cardsImages[args[i].toString()]!!
+                                    displayCard(cardImage)
+                                }
+                            }
+                        } else if (command == "show_hand and message") {
                             val message: String = jsonshit.getString("string")
                             Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
 
                             val args: JSONArray = jsonshit.getJSONArray("args")
                             clearCardsDisplay()
-                            for(i in 0..args.length())
-                            {
-                                if(cardsImages[args[i].toString()] != null)
-                                {
+                            for (i in 0..(args.length() - 1)) {
+                                if (cardsImages[args[i].toString()] != null) {
                                     val cardImage: Int = cardsImages[args[i].toString()]!!
                                     displayCard(cardImage)
+                                }
+                            }
+                        }
+                        if (command == "no") {
+                            Toast.makeText(this@MainActivity, "Cant Go To war twice...", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+
+            val url3 = URL(base_url + "/ask_state")
+
+            var isWinner:Boolean = false
+
+            while (!isWinner) {
+                with(url3.openConnection() as HttpURLConnection) {
+                    requestMethod = "GET"  // optional default is GET
+
+                    inputStream.bufferedReader().use {
+                        it.lines().forEach { line ->
+                            val jsonshit = JSONObject(line)
+                            val command = jsonshit.getString("command")
+                            if (command == "message") {
+                                val message: String = jsonshit.getString("string")
+                                if (message == "no") {
+                                    Thread.sleep(1000)
+                                }
+                                else {
+                                    isWinner = true
+                                    Thread.sleep(8000)
+                                    val toast = Toast.makeText(this@MainActivity, message, Toast.LENGTH_LONG)
+                                    val toastLayout = toast.getView() as LinearLayout
+                                    val toastTV = toastLayout.getChildAt(0) as TextView
+                                    toastTV.textSize = 30f
+                                    toast.show()
                                 }
                             }
                         }
                     }
                 }
             }
-
-        }
-
-        //Button 3 onClick
-        button3.setOnClickListener {
-            Toast.makeText(this@MainActivity, "3", Toast.LENGTH_SHORT).show()
-            var response = JSONObject().put("Button Name", "b3")
-
-        }
-
-        //Button 4 onClick
-        button4.setOnClickListener {
-            Toast.makeText(this@MainActivity, "4", Toast.LENGTH_SHORT).show()
-            var response = JSONObject().put("Button Name", "b4")
         }
     }
-
 }

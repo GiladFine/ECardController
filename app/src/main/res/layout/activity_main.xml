@@ -5,54 +5,37 @@
         xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
         android:layout_height="match_parent" android:layout_width="match_parent"
         android:orientation="vertical" android:id="@+id/mainLayout">
-    <LinearLayout
-            android:layout_height="match_parent" android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layout_weight="1" android:id="@+id/cardsLayout">
-        <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                app:layoutManager="android.support.v7.widget.LinearLayoutManager" android:id="@+id/cardsRecyclerView"/>
+    <LinearLayout android:layout_weight="1" android:layout_width="match_parent" android:layout_height="match_parent">
+        <HorizontalScrollView android:layout_width="match_parent"
+                              android:layout_height="match_parent">
+            <LinearLayout
+                    android:layout_height="match_parent" android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:id="@+id/cardsLayout">
+            </LinearLayout>
+        </HorizontalScrollView>
+
     </LinearLayout>
+
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="3"
             tools:context=".MainActivity" android:id="@+id/buttonsLayout">
-        <ImageButton
-                android:rotation="-90"
-                android:layout_width="60dp"
-                android:layout_height="60dp" app:srcCompat="@android:drawable/arrow_up_float"
-                android:id="@+id/leftButton"
-                android:layout_weight="0.5"
-                app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintVertical_bias="0.914"
-                app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/rightButton"
-        />
-        <ImageButton
-                android:rotation="90"
-                android:layout_weight="0.5"
-                android:layout_width="60dp"
-                android:layout_height="60dp" app:srcCompat="@android:drawable/arrow_up_float"
-                android:id="@+id/rightButton"
-                tools:layout_editor_absoluteY="321dp" app:layout_constraintStart_toEndOf="@+id/leftButton"
-                android:layout_marginStart="8dp" android:layout_marginLeft="8dp"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toStartOf="@+id/button1"/>
         <Button
                 android:text="1"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:id="@+id/button1"
-                tools:layout_editor_absoluteY="321dp" app:layout_constraintStart_toEndOf="@+id/rightButton"
+                tools:layout_editor_absoluteY="321dp"
                 android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintEnd_toStartOf="@+id/button2"/>
         <Button
                 android:text="2"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
@@ -60,25 +43,6 @@
                 tools:layout_editor_absoluteY="321dp" app:layout_constraintStart_toEndOf="@+id/button1"
                 android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toStartOf="@+id/button3"/>
-        <Button
-                android:text="3"
-                android:layout_weight="1"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/button3"
-                tools:layout_editor_absoluteY="321dp" app:layout_constraintStart_toEndOf="@+id/button2"
-                android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintEnd_toStartOf="@+id/button4"/>
-        <Button
-                android:text="4"
-                android:layout_weight="1"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:id="@+id/button4"
-                tools:layout_editor_absoluteY="321dp" app:layout_constraintStart_toEndOf="@+id/button3"
-                android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
-                app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"/>
+                />
     </LinearLayout>
 </LinearLayout>
